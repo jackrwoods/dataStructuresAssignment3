@@ -34,31 +34,26 @@ void test(){
 	/*  Add to the skip list  M = 20 random integers in [0,100] */
 
 	for(int i = 0; i < 20; i++) {
-		addSkipList(slst, (double)rand() % 100);
+		addSkipList(slst, (double) rand() % 100);
 	}
 
-	/*  Print out the contents of the skip list in the breadth-first order,
-            starting from top.
-	    While printing the elements,
-            move to a new line every time you reach the end of one level,
-	    and move down to the lower level of the skip list.
-	    For example, the print out of a skip list with 5 elements
-            should look like
+	 	struct skipLink * current = slst->topSentinel;
+		struct skipLink * beginning = slst->topSentinel;
+		// Iterate through each level of the skip list.
+		while (current->down != NULL) {
 
-	    7
-	    7 14 29
-	    3 7 9 14 20
-	 */
+			// Iterate over each element in the current row.
+			while (current->next != NULL) {
+				current = current->next;
+				printf("  %f  ", current->value); // The value is of TYPE double, given in skipList.h
+			}
 
+			beginning = beginning->down;
+			current = beginning;
 
-        /*  FIX ME */
+		}
 
-
-
-	/* Develop 3 test cases for printing out the contents of skip list
-           after remove function:
-	         int removeSkipList(struct skipList *slst, TYPE e)
-	 */
+		
 
 
 
