@@ -53,7 +53,12 @@ void test(){
 
 		}
 
-		
+
+
+	/* Develop 3 test cases for printing out the contents of skip list
+           after remove function:
+	         int removeSkipList(struct skipList *slst, TYPE e)
+	 */
 
 
 
@@ -123,9 +128,16 @@ struct skipLink* newSkipLink(TYPE e, struct skipLink * nextLnk, struct skipLink*
  pre:	current is not NULL
  post: a link to store the value */
 struct skipLink* skipLinkAdd(struct skipLink * current, TYPE e) {
-
-/* FIX ME */
-
+	slideRightSkipList(current, e); /* slideRightSkipList returns the element to
+																	 * the right of where the element should be
+																	 * inserted.*/
+	struct skipLink * next = current->next; // Store next pointer for new element
+	current->next = (struct skipLink *)malloc(sizeof(struct skipLink));
+	assert(current->next); // Ensure the element's memory was allocated correctly
+	current->next->next = next;
+	if (current->down != NULL) current->next->down = skipLinkAdd(current, e);
+	else current->next->down = NULL;
+	return current->next;
 }
 
 
@@ -197,9 +209,30 @@ void removeSkipList(struct skipList *slst, TYPE e)
 	post:	the new element is added to the lowest list and randomly to higher-level lists */
 void addSkipList(struct skipList *slst, TYPE e)
 {
+	/* Flip a coin for each row in the list. */
+	int num_rows = 1; /* The first row is given. */
+	while (rand % 2 > 0) {/* 50% chance that the element will appear in a given row */
+		num_rows++;
+	}
 
-/* FIX ME */
+	int rows_present = 1;/* This contains the number of rows that currently exist
+												* in the skip list. If we roll a higher num_rows, then
+												* each subsequent row should be created. */
+	struct skipLink* firstElement = slst->topSentinel;
+	while (firstElement->down != NULL) {
+		rows_present++;
+	}
 
+	firstElement = slst->topSentinel;/* Reset the element to the current top. */
+	while (num_rows > rows_present) {
+		slst->topSentinel = (struct skipLink *)malloc(sizeof(struct skiplink));
+		assert(slst->topSentinel);
+		slst->topSentinel->down = firstElement;/* The old top is placed below the new one. */
+		firstElement = slst->topSentinel;/*Reset pointer to top element*/
+		rows_present--;
+	}
+
+	slst->topSentinel->next = skipLinkAdd(firstElement, e);
 }
 
 /* Find the number of elements in the skip list:
