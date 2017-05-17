@@ -49,8 +49,8 @@ void test(){
    * and then print the skip list again to verify that the functions work. */
 	double valuesToRemove[3];
   for (iter = 0; iter < 3; iter++) { /* iter was previously declared, just re-using it */
-		valuesToRemove[i] = (double) (rand() % 100);
-		addSkipList(slst2, valuesToRemove[i]);
+		valuesToRemove[iter] = (double) (rand() % 100);
+		addSkipList(slst2, valuesToRemove[iter]);
   }
 
   printSkipList(slst2);
@@ -60,7 +60,7 @@ void test(){
 	printSkipList(slst);
 
 	for (iter = 0; iter < 3; iter++) { /* reusing i again */
-	 removeSkipList(slst, valuesToRemove[i]);
+	 removeSkipList(slst, valuesToRemove[iter]);
 	}
 
 	 printSkipList(slst);
@@ -81,7 +81,7 @@ Internal Functions
  post: output is a random intiger number in {0,1} */
 int flipSkipLink(void)
 {
-	return rand() % 2;
+	return (rand() % 2);
 }
 
 /* Move to the right as long as the next element is smaller than the input value:
@@ -201,7 +201,7 @@ void addSkipList(struct skipList *slst, TYPE e)
 {
 	/* Flip a coin for each row in the list. */
 	int num_rows = 1; /* The first row is given. */
-	while (rand % 2 > 0) {/* 50% chance that the element will appear in a given row */
+	while ((rand() % 2) > 0) {/* 50% chance that the element will appear in a given row */
 		num_rows++;
 	}
 
@@ -215,7 +215,7 @@ void addSkipList(struct skipList *slst, TYPE e)
 
 	firstElement = slst->topSentinel;/* Reset the element to the current top. */
 	while (num_rows > rows_present) {
-		slst->topSentinel = (struct skipLink *)malloc(sizeof(struct skiplink));
+		slst->topSentinel = (struct skipLink *)malloc(sizeof(struct skipLink));
 		assert(slst->topSentinel);
 		slst->topSentinel->down = firstElement;/* The old top is placed below the new one. */
 		firstElement = slst->topSentinel;/*Reset pointer to top element*/
