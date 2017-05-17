@@ -309,3 +309,10 @@ void deleteSkipList(struct skipList * slst) {
 	/* Free the remaining memory associated with slst. */
 	free(slst);
 }
+
+/* JW - Adding main function just for my own testing purposes. */
+
+int main(int argc, char* argv[]) {
+	test();
+	return 0;
+}
