@@ -41,6 +41,7 @@ void addSkipList(struct skipList *slst, TYPE e);
 int sizeSkipList(struct skipList *slst);
 void printSkipList(struct skipList *slst);
 void mergeSkipList(struct skipList *slst1, struct skipList *slst2);
+void deleteSkipList(struct skipList *slst);
 
 /* internal routines */
 int flipSkipLink();

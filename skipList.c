@@ -15,13 +15,17 @@ Main Function
 void test(){
 	int i,j;
 	int M;
-	struct skipList *slst;
+	struct skipList * slst;
+	struct skipList * slst2;
 	test();
 
 	srand ( time(NULL) );
 
 
 	slst=(struct skipList *)malloc(sizeof(struct skipList));  /*2*/
+	assert(slst);
+
+	slst2=(struct skipList *)malloc(sizeof(struct skipList));  /*2*/
 	assert(slst);
 
 
@@ -32,52 +36,38 @@ void test(){
 	assert (slst->topSentinel);
 
 	/*  Add to the skip list  M = 20 random integers in [0,100] */
-
-	for(int i = 0; i < 20; i++) {
-		addSkipList(slst, (double) rand() % 100);
+	int iter;
+	for(iter = 0; iter < 20; iter++) {
+		addSkipList(slst, (double) (rand() % 100));
 	}
 
-	 	struct skipLink * current = slst->topSentinel;
-		struct skipLink * beginning = slst->topSentinel;
-		// Iterate through each level of the skip list.
-		while (current->down != NULL) {
-
-			// Iterate over each element in the current row.
-			while (current->next != NULL) {
-				current = current->next;
-				printf("  %f  ", current->value); // The value is of TYPE double, given in skipList.h
-			}
-
-			beginning = beginning->down;
-			current = beginning;
-
-		}
+	/* Print items from the skiplist */
+	printSkipList(slst);
 
 
+  /* Add three elements to the skip list, print the skip list, remove the elements,
+   * and then print the skip list again to verify that the functions work. */
+	double valuesToRemove[3];
+  for (iter = 0; iter < 3; iter++) { /* iter was previously declared, just re-using it */
+		valuesToRemove[i] = (double) (rand() % 100);
+		addSkipList(slst2, valuesToRemove[i]);
+  }
 
-	/* Develop 3 test cases for printing out the contents of skip list
-           after remove function:
-	         int removeSkipList(struct skipList *slst, TYPE e)
-	 */
+  printSkipList(slst2);
 
+	mergeSkipList(slst, slst2);
 
+	printSkipList(slst);
 
-        /*  FIX ME */
+	for (iter = 0; iter < 3; iter++) { /* reusing i again */
+	 removeSkipList(slst, valuesToRemove[i]);
+	}
 
+	 printSkipList(slst);
 
+	 printf("Contains results are %d, %d, and %d.", containsSkipList(slst, valuesToRemove[0]), containsSkipList(slst, valuesToRemove[1]), containsSkipList(slst, valuesToRemove[2]));
 
-
-
-         /* Develop 3 test cases corresponding to the above 3 test cases
-            for printing out the output of contains function when e is equal to
-            the elements you removed above:
-	          int containsSkipList(struct skipList *slst, TYPE e)
-	 */
-
-
-        /*  FIX ME */
-
-
+	 deleteSkipList(slst);
 }
 
 
@@ -131,9 +121,9 @@ struct skipLink* skipLinkAdd(struct skipLink * current, TYPE e) {
 	slideRightSkipList(current, e); /* slideRightSkipList returns the element to
 																	 * the right of where the element should be
 																	 * inserted.*/
-	struct skipLink * next = current->next; // Store next pointer for new element
+	struct skipLink * next = current->next; /* Store next pointer for new element */
 	current->next = (struct skipLink *)malloc(sizeof(struct skipLink));
-	assert(current->next); // Ensure the element's memory was allocated correctly
+	assert(current->next); /* Ensure the element's memory was allocated correctly */
 	current->next->next = next;
 	if (current->down != NULL) current->next->down = skipLinkAdd(current, e);
 	else current->next->down = NULL;
@@ -253,7 +243,21 @@ int sizeSkipList(struct skipList *slst){
 void printSkipList(struct skipList *slst)
 {
 
-	/* FIX ME*/
+	struct skipLink * current = slst->topSentinel;
+	struct skipLink * beginning = slst->topSentinel;
+	/* Iterate through each level of the skip list. */
+	while (current->down != NULL) {
+
+		/* Iterate over each element in the current row. */
+		while (current->next != NULL) {
+			current = current->next;
+			printf("  %f  ", current->value); /* The value is of TYPE double, given in skipList.h */
+		}
+
+		beginning = beginning->down;
+		current = beginning;
+
+	}
 
 }
 
@@ -267,7 +271,41 @@ void printSkipList(struct skipList *slst)
  post: slst1 points to the merger skip list,  slst2 is null*/
 void mergeSkipList(struct skipList *slst1, struct skipList *slst2)
 {
+	/* Choose the bottom sentinel. */
+	struct skipLink * bottomLink = slst2->topSentinel;
+	while (bottomLink->down != NULL) {
+		bottomLink = bottomLink->down;
+	}
 
-	/* FIX ME*/
+	/* Iterate over each element in the bottom row, and delete them all. */
+	while (bottomLink->next != NULL) {
+		/* Add element to slst1 */
+		addSkipList(slst1, bottomLink->next->value);
+		/* Remove element from slst2 */
+		removeSkipList(slst2, bottomLink->next->value);
+	}
+	/* removeSkipList will automatically reconnect bottomLink with bL->next->next. */
+
+	/* Free the remaining memory associated with slst2. */
+	free(slst2);
 
 } /* end of the function */
+
+/* Free all memory associated with the skipList. */
+void deleteSkipList(struct skipList * slst) {
+	/* Choose the bottom sentinel. */
+	struct skipLink * bottomLink = slst->topSentinel;
+	while (bottomLink->down != NULL) {
+		bottomLink = bottomLink->down;
+	}
+
+	/* Iterate over each element in the bottom row, and delete them all. */
+	while (bottomLink->next != NULL) {
+		/* Remove element from slst */
+		removeSkipList(slst, bottomLink->next->value);
+	}
+	/* removeSkipList will automatically reconnect bottomLink with bL->next->next. */
+
+	/* Free the remaining memory associated with slst. */
+	free(slst);
+}
